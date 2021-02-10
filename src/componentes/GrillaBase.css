@@ -1,0 +1,16 @@
+.rdg-header-row {
+    font-size: 12px;
+    text-align: center;
+}
+
+.rdg-row {
+    font-size: 12px;
+}
+
+/* ESTILOS GLOBALES PARA LAS FILAS DE LAS GRILLAS */
+.titulo-grilla .rdg-Cell {
+	background: #e9ecef !important;
+	border-right: 1px solid #e9ecef;
+	border-bottom: 1px solid #e9ecef;
+}
+/* FIN ESTILOS GLOBALES PARA LAS FILAS DE LAS GRILLAS */

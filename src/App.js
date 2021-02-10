@@ -12,6 +12,7 @@ import Login from './general/Login';
 import Inicio from './general/Inicio';
 import Menu from './componentes/Menu';
 import Tabla from './componentes/Tabla';
+import Ejercitar from './componentes/Ejercitar';
 //import PrivateRoute from './componentes/PrivateRoute';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route exact path="/" component={Menu}/>
             <Route exact path="/inicio" component={Inicio}/>
             <Route exact path="/tabla" component={Tabla}/>
+            <Route exact path="/ejercitar" component={Ejercitar}/>
           </Switch>
         </Router>
       </UserProvider>

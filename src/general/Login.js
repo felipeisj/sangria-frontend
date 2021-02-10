@@ -29,7 +29,7 @@ function Login (props) {
             let resultado = await Api(
                 'auth/login',
                 JSON.stringify(usuario),
-                {'Content-Type': 'application/json' },
+                {'Content-Type': 'application/json'},
                 false,
                 'post');   
                 console.log(resultado)

@@ -27,7 +27,7 @@ function Layout(props) {
             </Row>
             <footer>
                 <hr />
-                <a href="/">SSP: Sistema de Seguimiento de Proyectos, Universidad Austral de Chile</a>
+                <a href="/">Esta frase pertenece a Layout</a>
             </footer>
         </Container>
     );
