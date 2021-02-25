@@ -1,13 +1,9 @@
 import React, {useState, useContext} from 'react';
 import {Api} from '../utils/Api';
-import UserContext from '../UserContext';
 import {Alert, Button} from 'react-bootstrap';
-import {FaUserTie, FaShoppingCart} from 'react-icons/fa';
 
 function Login (props) {
 
-    const contexto = useContext(UserContext);
-    //const [redireccionar, setRedireccionar] = useState(false);
     const [notificacion, setNotificacion] = useState(false);
     const [usuario, setUsuario] = useState({
         username: '',
@@ -36,13 +32,13 @@ function Login (props) {
 
             if (resultado && resultado.status === 200) {
                 localStorage.setItem('token', resultado.data.access_token);
+                console.log(resultado.data.access_token)
                 localStorage.setItem('usuario', resultado.data.usuario);
                 let usuario = resultado.data.usuario;
-                //contexto.setUsuario({id: usuario.id, nombre_usuario: usuario.nombre})
                 console.log("Se logeó")
                 setNotificacion(false);
                 //setRedireccionar(true);
-                props.history.push('/inicio');
+                props.history.push('/menu');
             } else {
                 console.log("tenemos un error");
                 // Determinar qué casos tratermos aquí
@@ -70,8 +66,6 @@ function Login (props) {
 
     return (
         <>
-        {/* {redireccionar &&
-        <Redirect to='/presupuesto/caja' />} */}
 
         <form>
             <div className="form-group">
@@ -85,7 +79,7 @@ function Login (props) {
                 <small
                     id="usernameHelp"
                     className="form-text text-muted">
-                        Si no tiene un usuario puede solicitarlo a: .....
+                        Mensaje muteado de ayuda
                 </small>
             </div>
             <div className="form-group">

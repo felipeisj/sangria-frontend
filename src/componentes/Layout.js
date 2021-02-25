@@ -1,5 +1,5 @@
 import React from 'react';
-import Menu from './Menu.js';
+import Menu from './menu/Menu.js';
 import {Container, Row, Col, Breadcrumb, Badge} from 'react-bootstrap';
 
 
@@ -10,15 +10,15 @@ function Layout(props) {
     return (
         <Container fluid={true}>
             <Row>
-                {/* <Col> */}
-                    {/* <Menu /> */}
-                {/* </Col> */}
+                <Col>
+                    <Menu />
+                </Col>
             </Row>
             <Row style={{paddingTop:'10px'}}>
                 <Col>
                     <Breadcrumb>
                         {/* <Breadcrumb.Item as={Link} to='/'>Home</Breadcrumb.Item> */}
-                        <Breadcrumb.Item active>{props.title2}</Breadcrumb.Item>
+                        <Breadcrumb.Item active></Breadcrumb.Item>
                     </Breadcrumb>
                 </Col>
             </Row>

@@ -2,42 +2,38 @@ import React, {useState, useEffect, useContext} from 'react';
 import UserContext from '../UserContext';
 import Layout from '../componentes/Layout';
 import { Link } from 'react-router-dom';
-import {Container, Row, Col, Card, Button, Jumbotron} from 'react-bootstrap';
+import {Container, Row, Button, Card} from 'react-bootstrap';
 import {Api} from '../utils/Api';
 
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import BootstrapTable from 'react-bootstrap-table-next';
-import Tabla from '../componentes/Tabla';
 
 
 
 function Inicio(props) {
-    const products = []
-    const [usuarios, setUsuarios] = useState([])
-    useEffect(
-        () => {
-            data()
-        },
-        []
-    )
-
-    async function data(){
-        let respuesta = await Api("api/usuarios/test", {}, {}, false, 'get')
-        console.log(respuesta)
-        setUsuarios(respuesta.data.usuarios)
     
-
+    function ingresar() {
+        props.history.push('/login');
     }
+
     
     return (
-        <Layout title="Inicio">
             <Container fluid="md">
                 <Row>
-
+                    <Card>
+                        <Card.Body>
+                            <Card.Title>Bienvenido a SangrIA</Card.Title>
+                            <Card.Subtitle className="mb-2 text-muted">Investigador Responsable: Felipe Salazar</Card.Subtitle>
+                            <Card.Text>
+                            Con el software SangrIA usted podrá clasificar elementos formes. Hay dos maneras de hacerlo,
+                            puede ejercitar su capacidad de reconocimiento al etiquetar células o si tiene dudas sobre la 
+                            clasificación de una muestra de sangre, puede subirla a SangrIA y el software la clasificará
+                            por usted.
+                            </Card.Text>
+                            <Button variant="primary" onClick={ingresar}>Ingresar</Button>
+                            <Button variant="light">Solicitar Cuenta</Button>
+                        </Card.Body>
+                    </Card>
                 </Row>
             </Container>
-
-        </Layout>
 
     )
 }
