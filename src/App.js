@@ -5,18 +5,14 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-
 import './App.css'
 import Login from './general/Login';
-//import Logout from './general/Logout';
 import Inicio from './general/Inicio';
 import Menu from './componentes/menu/Menu';
 import Tabla from './componentes/Tabla';
 import Ejercitar from './componentes/Ejercitar';
 import Logout from './componentes/Logout';
 import PrivateRoute from './componentes/PrivateRoute';
-
-
 
 function App() {
   return (

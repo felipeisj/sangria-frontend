@@ -9,12 +9,10 @@ import {Api} from '../utils/Api';
 
 
 function Inicio(props) {
-    
     function ingresar() {
         props.history.push('/login');
     }
 
-    
     return (
             <Container fluid="md">
                 <Row>

@@ -4,9 +4,6 @@ import {Container, Row, Col, Breadcrumb, Badge} from 'react-bootstrap';
 
 
 function Layout(props) {
-
-
-
     return (
         <Container fluid={true}>
             <Row>

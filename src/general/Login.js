@@ -3,7 +3,6 @@ import {Api} from '../utils/Api';
 import {Alert, Button} from 'react-bootstrap';
 
 function Login (props) {
-
     const [notificacion, setNotificacion] = useState(false);
     const [usuario, setUsuario] = useState({
         username: '',
@@ -12,7 +11,6 @@ function Login (props) {
     });
 
     function onChange(event) {
-
         setUsuario({
             ...usuario,
             [event.target.name]: event.target.value
@@ -20,7 +18,6 @@ function Login (props) {
     }
 
     async function validaUsuario(event) {
-        
         try{
             let resultado = await Api(
                 'auth/login',
@@ -53,7 +50,6 @@ function Login (props) {
     }
 
     async function testToken(event) {
-
         let resultado = await Api('auth/usuario/');
         if (resultado && resultado.status === 200) {
             console.log(resultado);
@@ -61,12 +57,8 @@ function Login (props) {
             console.log('viene un error');
         }
     }
-
-
-
     return (
         <>
-
         <form>
             <div className="form-group">
                 <label htmlFor="username">Usuario:</label>
@@ -101,7 +93,6 @@ function Login (props) {
                     htmlFor="remember">
                         Recordar</label>
             </div>
-
             <Button variant="primary" onClick={validaUsuario}>Ingresar</Button>
             <Button variant="warning" onClick={testToken}>Probar Token</Button>
             &nbsp;

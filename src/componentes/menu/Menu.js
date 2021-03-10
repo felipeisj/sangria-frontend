@@ -1,14 +1,10 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {Form,Button, Container, Row, NavDropdown, Dropdown, ButtonGroup, Col, Navbar, Nav} from 'react-bootstrap'
-import {FaUserTie, FaShoppingCart} from 'react-icons/fa';
+import React, {useState, useContext} from 'react';
+import {Form, NavDropdown, ButtonGroup, Navbar, Nav} from 'react-bootstrap'
 import {withRouter, Link} from 'react-router-dom';
 import UserContext from '../../UserContext'
 import MenuUsuario from './MenuUsuario';
 
 function Menu(props){
-
-
-
     const contexto = useContext(UserContext)
     const [mostrarSelectorPredio, setMostrarSelectorPredio] = useState(false);
     // const tipoPredio = contexto.predio.cooperativa === true ? "Cooperativa" : "Predio";
@@ -44,22 +40,15 @@ function Menu(props){
                         <NavDropdown.Item as={Link} to='/ejercitar'>Go</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
-
                 <Form inline className="float-right">
                     {/* <FormControl type="text" placeholder="Search" className="mr-sm-2" /> */}
                     <ButtonGroup>
-                        <Button variant="outline-secondary" size="sm">
-                            Boton predios
-                        </Button>
                         <MenuUsuario/>
                     </ButtonGroup>
                 </Form>
             </Navbar.Collapse>
         </Navbar>
     );
-
-
-
 }
 
 export default withRouter(Menu);

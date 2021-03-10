@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext, Component } from 'react';
+import React, { useState, useEffect} from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from './Layout';
-import { Api, getLocalFile } from '../utils/Api';
-import {ButtonGroup, Button, ToggleButtonGroup, Alert, Modal, Image, Table} from 'react-bootstrap'
-
-import {ToastContainer, toast} from 'react-toastify';
+import { Api} from '../utils/Api';
+import { Button, Modal, Image, Table} from 'react-bootstrap'
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Ejercitar(props){
@@ -12,8 +11,10 @@ function Ejercitar(props){
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    
 
+    const [esAlteracion, setEsAlteracion] = useState(false);
+    const [subCategorias, setSubCategorias] = useState([]);
+    const [subCategoriaSeleccionada, setSubCategoriaSeleccionada] = useState([]);
     const [categorias, setCategoria] = useState([]);
     const [etiquetas, setEtiquetas] = useState([]);
     const [categoriaSeleccionada, setCategoriaSeleccionada] =useState({
@@ -24,12 +25,13 @@ function Ejercitar(props){
         id: "",
         nombre: ""
     });
+
     const [alteraciones, setAlteraciones] = useState([]);
+    const [celula, setCelula] = useState([]);
     const [alteracionSeleccionada, setAlteracionSeleccionada] = useState({
         id: "",
         nombre: ""
     });
-    const [celula, setCelula] = useState([]);
     const [estadoClickCategoria, setEstadoClickCategoria] = useState(true);
     const [estadoMostrarCategoria, setEstadoMostrarCategoria] = useState(false);
     const menu = () => {
@@ -45,23 +47,43 @@ function Ejercitar(props){
         }
     }
 
-    async function obtenerEtiquetaSeleccionada(etiqueta_id, etiqueta_nombre){  
-        setEtiquetaSeleccionada({
-            'id' : etiqueta_id,
-            'nombre' : etiqueta_nombre   
-        })
+    function obtenerEtiquetaSeleccionada(etiqueta_id, etiqueta_nombre){
+        console.log("obtener etiqueta seleccionada", etiqueta_nombre)
+        console.log("es alteracion", esAlteracion)
+        if(esAlteracion){
+            setAlteracionSeleccionada({
+                'id' : etiqueta_id,
+                'nombre' : etiqueta_nombre
+            })
+        }else{  
+            setEtiquetaSeleccionada({
+                'id' : etiqueta_id,
+                'nombre' : etiqueta_nombre   
+            })
+        }
     }
 
-    async function obtenerAlteracionSeleccionada(alteracion_id, alteracion_nombre){  
-        setAlteracionSeleccionada({
-            'id' : alteracion_id,
-            'nombre' : alteracion_nombre
-        })        
+    function limpiarDatos(){
+        setCategoriaSeleccionada({
+            id : "",
+            nombre : ""
+        });
+        setEtiquetaSeleccionada({
+            id : "",
+            nombre : ""
+        }); 
+        setEtiquetas([]);
+        setAlteracionSeleccionada([]);
+        setAlteraciones([]);
+        setEstadoMostrarCategoria(false);
+        setEstadoClickCategoria(true);
+        setEsAlteracion(false);
     }
 
     function ejercitarNuevamente(){
-        obtenerDatosCelula()
         handleClose()
+        setEstadoMostrarCategoria(false);
+        obtenerDatosCelula()
     }
 
     async function enviarInfo(){
@@ -70,28 +92,18 @@ function Ejercitar(props){
             categoria_nombre : categoriaSeleccionada.nombre,
             etiqueta_id : etiquetaSeleccionada.id,
             valor_etiqueta : etiquetaSeleccionada.nombre,
-            celula_id : celula.id
+            celula_id : celula.id,
+            alteracion_id : alteracionSeleccionada.id ? alteracionSeleccionada.id : "",
+            valor_alteracion : alteracionSeleccionada.nombre
         }
         try{
             let post_etiqueta = await Api(`api/valor-etiqueta`, JSON.stringify(data),
                                             {'Content-Type': 'application/json'}, true,'post');
             if (post_etiqueta && post_etiqueta.status === 200) {
-                console.log("Se envió la etiqueta")
                 setEstadoClickCategoria(true);
                 // Si se envía la info, limpiamos los datos.
-                setCategoriaSeleccionada({
-                    id : "",
-                    nombre : ""
-                });
-                setEtiquetaSeleccionada({
-                    id : "",
-                    nombre : ""
-                });  
-                setCelula([]);
-                setEtiquetas([]);
-                setAlteracionSeleccionada([]);
-                setAlteraciones([]);
-
+                limpiarDatos();
+                setCelula([]); 
                 toast.success("Etiqueta Enviada con éxito", {position: "bottom-center", autoClose: 1000, hideProgressBar: true,});
                 setShow(true)                
             }else{
@@ -105,37 +117,47 @@ function Ejercitar(props){
 
     }
 
-    async function llamarEtiquetas(categoria_id, categoria_nombre){
-        let etiqueta = await Api(`api/etiquetas?categoria_id=${categoria_id}`, {}, {}, 'get');
-        if (etiqueta && etiqueta.status == 200){
-            console.log(etiqueta)
-            setEtiquetas(etiqueta.data.etiquetas)
-            setCategoriaSeleccionada({
-                id : categoria_id,
-                nombre : categoria_nombre
-            })
-            setEstadoClickCategoria(false);
-            setEstadoMostrarCategoria(true);
+    async function llamarEtiquetas(categoria_id, categoria_nombre, dependencia_id){
+        if (categoria_id === 2){
+            let subcategoria = await Api(`api/categoria/${categoria_id}/sub-categorias`, {}, {}, 'get');
+            setSubCategorias(subcategoria.data.categorias)
         }else{
-            console.log("eror al llamar etiquetas")
-            //setEstadoClickCategoria(true);
+            setSubCategorias([]);
+            setEstadoClickCategoria(true);
+            let etiqueta = await Api(`api/etiquetas?categoria_id=${categoria_id}`, {}, {}, 'get');
+            if (etiqueta && etiqueta.status === 200){
+                setEtiquetas(etiqueta.data.etiquetas)
+                if (categoriaSeleccionada.nombre==""){
+                    setCategoriaSeleccionada({
+                        id : categoria_id,
+                        nombre : categoria_nombre
+                    })
+                }
+                setEstadoClickCategoria(false);
+                setEstadoMostrarCategoria(true);
+            }else{
+                console.log("eror al llamar etiquetas")
+            }
+        }
+
+        if(dependencia_id){
+            categoria_id = dependencia_id;
         }
         
         let alteracion = await Api(`api/categorias/alteraciones?categoria_id=${categoria_id}`, {}, {}, 'get');
-        if (alteracion && etiqueta.status == 200){
+        if (alteracion && alteracion.status == 200){
             setAlteraciones(alteracion.data.alteraciones)
         }else{
             console.log("eror al llamar alteraciones")
-        }  
-    }
-    
+        }
 
+          
+    }
 
     async function obtenerDatosCelula() {
     let resultado = await Api('api/celula', {}, {}, 'get');
         if (resultado && resultado.status === 200) {
             setCelula(resultado.data.celula);
-            console.log(resultado)
         } else {
              //alert.show('Error al cargar datos', { type: 'error' });
             setCelula([]);
@@ -157,19 +179,37 @@ function Ejercitar(props){
                                 <h4 >Célula a clasificar</h4>
                                 <Image style={{width:"150px", height:"auto"}} src={celula.url_imagen} rounded></Image>
                                 <br></br>
-                                <h5>Categorias</h5>
+                                <h5>Seleccione línea</h5>
                                 {estadoMostrarCategoria===false ? 
                                 <>
                                     {categorias.map((radio, index) => (
+                                        <>
                                         <Button 
                                             key={radio.id}
-                                            variant={categoriaSeleccionada.id==radio.id ? "secondary":"outline-secondary"}
+                                            variant={categoriaSeleccionada.id===radio.id ? "secondary":"outline-secondary"}
                                             value={radio.descripcion} 
                                             onClick={() => llamarEtiquetas(radio.id, radio.nombre)}
-                                            style={{width:"150px"}} 
+                                            style={{width:"250px"}} 
                                             >
                                             {radio.nombre}
                                         </Button>
+                                        {/* // Poner if radio.nombre === leucocito / Desplegando sub categorias leucocito */}
+                                        {radio.nombre ==="Leucocito" &&
+                                            <> 
+                                            {subCategorias.map((radio, index) => (
+                                                <Button 
+                                                    key={radio.id}
+                                                    variant={subCategoriaSeleccionada.id===radio.id ? "secondary":"outline-secondary"}
+                                                    value={radio.descripcion} 
+                                                    onClick={() => llamarEtiquetas(radio.id, radio.nombre, radio.dependencia_id)}
+                                                    style={{width:"210px", marginBottom:"5px"}} 
+                                                    >
+                                                    {radio.nombre}
+                                                </Button>
+                                            ))}
+                                            </> //React fragment
+                                        }
+                                        </>
                                     ))}
                                 </>     
                                 :
@@ -177,19 +217,19 @@ function Ejercitar(props){
                                 }
                             </div>
                             <Button variant="outline-secondary" hidden={estadoClickCategoria} onClick={(e)=>{
-                                setEstadoMostrarCategoria(false);
-                                setEstadoClickCategoria(true);
+                                limpiarDatos();
                             }}>
-                                Volver a Categorias
+                                Volver a Línea
                             </Button>
                             <div hidden = {estadoClickCategoria} style={{ marginTop: "10px" }} align="center">    
-                                <h5>Etiquetas</h5>
+                                <h6>{categoriaSeleccionada.nombre}</h6>
+                                <h6>Seleccione la etiqueta</h6>
                                 {etiquetas.map((radio, index) => (
                                     <Button
                                         key={radio.id}                                                 
                                         style={{width:"270px", height:"50px", marginLeft:"10px", textAlign:"left"}}
                                         value={radio.nombre}
-                                        variant={etiquetaSeleccionada.nombre==radio.nombre ? "secondary":"outline-secondary"}
+                                        variant={etiquetaSeleccionada.nombre===radio.nombre || alteracionSeleccionada.nombre ===radio.nombre ? "secondary":"outline-secondary"}
                                         onClick={() =>obtenerEtiquetaSeleccionada(radio.id, radio.nombre)} 
                                     >
                                         <Image style={{width:"40px", height:"40px", marginRight:"10px"}} src={radio.ejemplo} rounded></Image>
@@ -198,8 +238,7 @@ function Ejercitar(props){
                                     </Button>
                                 ))}
                             </div>
-
-                            <div hidden = {estadoClickCategoria} style={{ marginTop: "20px" }} align="center">
+                            <div hidden={estadoClickCategoria} style={{ marginTop: "20px" }} align="center">
                             <h6>Alteraciones</h6>
                                     {alteraciones.map((radio, index) => (
                                     <div key={radio.id}>
@@ -207,17 +246,46 @@ function Ejercitar(props){
                                             key={radio.nombre}                                                 
                                             style={{width:"210px"}}
                                             value={radio.nombre}
-                                            variant={alteracionSeleccionada.nombre==radio.nombre ? "secondary":"outline-secondary"}
-                                            onClick={() =>obtenerAlteracionSeleccionada(radio.id, radio.nombre)} 
+                                            variant={alteracionSeleccionada.nombre===radio.nombre ? "secondary":"outline-secondary"}
+                                            onClick={(e) =>{
+                                                if (etiquetaSeleccionada.id){
+                                                    setEsAlteracion(true);
+                                                    llamarEtiquetas(radio.id, radio.nombre);
+                                                }else{
+                                                    toast.warning("Debe seleccionar el tipo de célula antes de ver alteraciones", {position: "bottom-center", autoClose: 4000, })
+                                                    setShow(false);
+                                                }
+                                            }
+                                            } 
                                         >
-                                            {radio.nombre}  
+                                            {radio.nombre}
                                         </Button>
                                     </div>
                                     ))}
-                                    <Button marginTop="10px" variant="info" onClick={enviarInfo}>
-                                        Enviar
-                                     </Button>
                             </div>
+                                <Table striped bordered hover size="sm" hidden={estadoClickCategoria} style={{marginTop:"10px"}}>
+                                    <thead>
+                                        <tr>
+                                            <th>Línea</th>
+                                            <th>Célula</th>
+                                            <th>Alteración</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{categoriaSeleccionada.nombre}</td>
+                                            <td >{etiquetaSeleccionada.nombre}</td>
+                                            <td >{alteracionSeleccionada.nombre}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                                <Button  style={{width:"200px", height:"50px", marginTop:"20px"}} variant="info" onClick={(e)=>{
+                                        enviarInfo();
+                                        }
+                                    }>
+                                    Enviar respuesta
+                                </Button> 
+                                
                         </div>
                         <Modal show={show} onHide={handleClose}>
                             <Modal.Header closeButton>
@@ -233,57 +301,10 @@ function Ejercitar(props){
                                 </Button>
                             </Modal.Footer>
                         </Modal>
-                        <br></br>
-                                    
             </Layout>
         )
 }   
 
-// Ejemplo tabla:
-{/* <Table striped bordered hover>
-        <thead>
-            <tr>
-            <th>Nucleo</th>
-            <th>Citoplasma</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <td>
-                <Button variant="secondary">
-                    ejemplo
-                </Button>
-            </td>
-            <td>
-                <Button variant="secondary">
-                    ejemplo
-                </Button></td>
-            </tr>
-            <tr>
-            <td>
-                <Button variant="secondary">
-                    ejemplo
-                </Button>
-            </td>
-            <td>
-                <Button variant="secondary">
-                    ejemplo
-                </Button>
-            </td>
-            </tr>
-            <tr>
-            <td >
-            <Button variant="secondary">
-                    ejemplo
-                </Button>
-            </td>
-            <td>
-                <Button variant="secondary">
-                    ejemplo
-                </Button>
-            </td>
-            </tr>
-        </tbody>
-    </Table> */}
+
 
 export default Ejercitar;
