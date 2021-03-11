@@ -10,7 +10,6 @@ function Ejercitar(props){
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
 
     const [esAlteracion, setEsAlteracion] = useState(false);
     const [subCategorias, setSubCategorias] = useState([]);
@@ -39,17 +38,16 @@ function Ejercitar(props){
     }
     
     async function obtenerCategorias(){
-        let categorias = await Api('api/categorias', {}, {}, 'get');  
+        let categorias = await Api('api/categorias', {}, {}, true, 'get');  
         if (categorias && categorias.status === 200) {
             setCategoria(categorias.data.categorias)
         }else{
-            return console.log("no encontrada")
+            toast.warning("No se encontraron categorías", {position: "bottom-center", autoClose: 4000, })
+            setShow(false);
         }
     }
 
     function obtenerEtiquetaSeleccionada(etiqueta_id, etiqueta_nombre){
-        console.log("obtener etiqueta seleccionada", etiqueta_nombre)
-        console.log("es alteracion", esAlteracion)
         if(esAlteracion){
             setAlteracionSeleccionada({
                 'id' : etiqueta_id,
@@ -112,19 +110,20 @@ function Ejercitar(props){
             }
         }
         catch (error) {
-            console.log(error);
+            toast.warning("Error al enviar info", {position: "bottom-center", autoClose: 4000, })
+            setShow(false);
         }
 
     }
 
     async function llamarEtiquetas(categoria_id, categoria_nombre, dependencia_id){
         if (categoria_id === 2){
-            let subcategoria = await Api(`api/categoria/${categoria_id}/sub-categorias`, {}, {}, 'get');
+            let subcategoria = await Api(`api/categoria/${categoria_id}/sub-categorias`, {}, {}, true, 'get');
             setSubCategorias(subcategoria.data.categorias)
         }else{
             setSubCategorias([]);
             setEstadoClickCategoria(true);
-            let etiqueta = await Api(`api/etiquetas?categoria_id=${categoria_id}`, {}, {}, 'get');
+            let etiqueta = await Api(`api/etiquetas?categoria_id=${categoria_id}`, {}, {}, true, 'get');
             if (etiqueta && etiqueta.status === 200){
                 setEtiquetas(etiqueta.data.etiquetas)
                 if (categoriaSeleccionada.nombre==""){
@@ -136,7 +135,8 @@ function Ejercitar(props){
                 setEstadoClickCategoria(false);
                 setEstadoMostrarCategoria(true);
             }else{
-                console.log("eror al llamar etiquetas")
+                toast.warning("Error al llamar etiquetas", {position: "bottom-center", autoClose: 4000, })
+                setShow(false);
             }
         }
 
@@ -144,7 +144,7 @@ function Ejercitar(props){
             categoria_id = dependencia_id;
         }
         
-        let alteracion = await Api(`api/categorias/alteraciones?categoria_id=${categoria_id}`, {}, {}, 'get');
+        let alteracion = await Api(`api/categorias/alteraciones?categoria_id=${categoria_id}`, {}, {}, true, 'get');
         if (alteracion && alteracion.status == 200){
             setAlteraciones(alteracion.data.alteraciones)
         }else{
@@ -155,7 +155,7 @@ function Ejercitar(props){
     }
 
     async function obtenerDatosCelula() {
-    let resultado = await Api('api/celula', {}, {}, 'get');
+    let resultado = await Api('api/celula', {}, {}, true, 'get');
         if (resultado && resultado.status === 200) {
             setCelula(resultado.data.celula);
         } else {
@@ -172,6 +172,7 @@ function Ejercitar(props){
         },
         []
     )
+    
     return (
             <Layout>
                         <div style={{ marginTop: "10px" }} align="center" >

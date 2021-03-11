@@ -31,14 +31,13 @@ function Login (props) {
                 localStorage.setItem('token', resultado.data.access_token);
                 console.log(resultado.data.access_token)
                 localStorage.setItem('usuario', resultado.data.usuario);
-                let usuario = resultado.data.usuario;
-                console.log("Se logeó")
+                console.log("resultado")
                 setNotificacion(false);
                 //setRedireccionar(true);
                 props.history.push('/menu');
             } else {
                 console.log("tenemos un error");
-                // Determinar qué casos tratermos aquí
+                // Determinar qué casos tratemos aquí
                 console.log(resultado);
             }
         }
