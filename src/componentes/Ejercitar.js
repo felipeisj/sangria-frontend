@@ -2,14 +2,16 @@ import React, { useState, useEffect} from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from './Layout';
 import { Api} from '../utils/Api';
-import { Button, Modal, Image, Table} from 'react-bootstrap'
+import { Button, Modal, Image, Table, Card} from 'react-bootstrap'
 import {toast} from 'react-toastify';
+import { ArrowLeft } from 'react-bootstrap-icons';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Ejercitar(props){
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
+    const [mostrarImagenCelula, setMostrarImagenCelula] = useState(false)
 
     const [esAlteracion, setEsAlteracion] = useState(false);
     const [subCategorias, setSubCategorias] = useState([]);
@@ -157,7 +159,12 @@ function Ejercitar(props){
     async function obtenerDatosCelula() {
     let resultado = await Api('api/celula', {}, {}, true, 'get');
         if (resultado && resultado.status === 200) {
-            setCelula(resultado.data.celula);
+            if(resultado.data.celula){
+                setCelula(resultado.data.celula);
+            }else{
+                setMostrarImagenCelula(true);
+            }
+            
         } else {
              //alert.show('Error al cargar datos', { type: 'error' });
             setCelula([]);
@@ -175,12 +182,16 @@ function Ejercitar(props){
     
     return (
             <Layout>
-                        <div style={{ marginTop: "10px" }} align="center" >
+                        <div style={{ marginTop: "10px" }} align="center" hidden={mostrarImagenCelula} >
                             <div hidden={estadoMostrarCategoria}>
-                                <h4 >Célula a clasificar</h4>
-                                <Image style={{width:"150px", height:"auto"}} src={celula.url_imagen} rounded></Image>
+                                <Button variant="outline-dark" style={{width:"200px", height:"30px"}}  disabled>
+                                    Célula a clasificar
+                                </Button>
+                                <Image style={{width:"200px", height:"250px", marginTop:"2px"}} src={celula.url_imagen} rounded></Image>
                                 <br></br>
-                                <h5>Seleccione línea</h5>
+                                <Button variant="outline-dark" style={{width:"200px", height:"30px", marginBottom:"3px"}} disabled>
+                                    Seleccione línea
+                                </Button>
                                 {estadoMostrarCategoria===false ? 
                                 <>
                                     {categorias.map((radio, index) => (
@@ -217,25 +228,28 @@ function Ejercitar(props){
                                   <></>  
                                 }
                             </div>
-                            <Button variant="outline-secondary" hidden={estadoClickCategoria} onClick={(e)=>{
+                            {/* <Button variant="outline-secondary" hidden={estadoClickCategoria} onClick={(e)=>{
                                 limpiarDatos();
                             }}>
                                 Volver a Línea
-                            </Button>
+                            </Button> */}
+                            <ArrowLeft hidden={estadoClickCategoria} align="left" variant="outline-secondary" onClick={(e)=>{
+                                limpiarDatos();
+                            }}> arrow left</ArrowLeft>
                             <div hidden = {estadoClickCategoria} style={{ marginTop: "10px" }} align="center">    
-                                <h6>{categoriaSeleccionada.nombre}</h6>
-                                <h6>Seleccione la etiqueta</h6>
+                                <h6>Línea actual: {categoriaSeleccionada.nombre}</h6>
+                                <br></br>
+                                <h5>Seleccione tipo de célula</h5>
                                 {etiquetas.map((radio, index) => (
                                     <Button
                                         key={radio.id}                                                 
-                                        style={{width:"270px", height:"50px", marginLeft:"10px", textAlign:"left"}}
+                                        style={{width:"280px", height:"auto", marginLeft:"10px", textAlign:"left"}}
                                         value={radio.nombre}
                                         variant={etiquetaSeleccionada.nombre===radio.nombre || alteracionSeleccionada.nombre ===radio.nombre ? "secondary":"outline-secondary"}
                                         onClick={() =>obtenerEtiquetaSeleccionada(radio.id, radio.nombre)} 
                                     >
                                         <Image style={{width:"40px", height:"40px", marginRight:"10px"}} src={radio.ejemplo} rounded></Image>
                                         {radio.nombre}
-  
                                     </Button>
                                 ))}
                             </div>
@@ -287,6 +301,9 @@ function Ejercitar(props){
                                     Enviar respuesta
                                 </Button> 
                                 
+                        </div>
+                        <div hidden={!mostrarImagenCelula} style={{ marginTop: "20px" }} align="center">
+                                    <h5> No hay fotos para etiquetar </h5>
                         </div>
                         <Modal show={show} onHide={handleClose}>
                             <Modal.Header closeButton>

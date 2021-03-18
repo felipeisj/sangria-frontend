@@ -1,7 +1,7 @@
 import React from 'react';
 import Menu from './menu/Menu.js';
 import {Container, Row, Col, Breadcrumb, Badge} from 'react-bootstrap';
-
+import "./Layout.css";
 
 function Layout(props) {
     return (
@@ -24,7 +24,7 @@ function Layout(props) {
             </Row>
             <footer>
                 <hr />
-                <a href="/">Esta frase pertenece a Layout</a>
+                <a href="/menu">Sangria: Inteligencia artificial en suestras de sangre</a>
             </footer>
         </Container>
     );
