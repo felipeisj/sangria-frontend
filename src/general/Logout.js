@@ -3,13 +3,11 @@ import UserContext from '../UserContext'
 
 
 function Logout(props) {
-
     const contexto = useContext(UserContext)
-
     useEffect(
         () => {
             localStorage.clear();
-            contexto.setPerfil({nombre: null, permisos: null});
+            contexto.setPerfil({id: null, nombre: null, academico: null});
             props.history.push('/login');
         },
         []

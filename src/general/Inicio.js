@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
-import UserContext from '../UserContext';
-import Layout from '../componentes/Layout';
-import { Link } from 'react-router-dom';
+// import UserContext from '../UserContext';
+// import Layout from '../componentes/Layout';
+// import { Link } from 'react-router-dom';
 import {Container, Row, Button, Card} from 'react-bootstrap';
 import {Api} from '../utils/Api';
 

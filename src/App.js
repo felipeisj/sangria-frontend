@@ -13,6 +13,7 @@ import Tabla from './componentes/Tabla';
 import Ejercitar from './componentes/Ejercitar';
 import Logout from './componentes/Logout';
 import PrivateRoute from './componentes/PrivateRoute';
+import Informacion from './componentes/Informacion';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
             <PrivateRoute exact path="/" component={Inicio}/>
             <PrivateRoute exact path="/tabla" component={Tabla}/>
             <PrivateRoute exact path="/ejercitar" component={Ejercitar}/>
+            <PrivateRoute exact path="/ejercitar/celula/:celula_id" component={Ejercitar}/>
+            <PrivateRoute exact path="/informacion" component={Informacion}/>
           </Switch>
         </Router>
       </UserProvider>

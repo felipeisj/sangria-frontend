@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from './menu/Menu.js';
-import {Container, Row, Col, Breadcrumb, Badge} from 'react-bootstrap';
+import {Container, Row, Col, Breadcrumb} from 'react-bootstrap';
 import "./Layout.css";
 
 function Layout(props) {

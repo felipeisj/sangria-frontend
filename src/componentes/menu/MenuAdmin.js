@@ -1,15 +1,19 @@
-import React, {useState, useContext, useEffect, Text} from 'react';
+import React, {useState} from 'react';
 import { Dropdown, ButtonGroup} from 'react-bootstrap';
 import { Link} from 'react-router-dom';
 import {FaUserTie} from 'react-icons/fa';
-import UserContext from '../../UserContext';
 // import {FormUsuario, getUsuario, FormCambiarPassword} from '../../modulos/administracion/FormularioUsuario';
 
 
 function MenuUsuario(props) {
     const [showFormUsuario, setShowFormUsuario] = useState(false);
     const [showCambiarPassword, setShowCambiarPassword] = useState(false);
-    const contexto = useContext(UserContext);
+    const [usuarioForm, setUsuarioForm] = useState(
+		{
+			"id":"",
+			"nombre": ""
+		});
+
 
     const menu = () => {
         props.history.push('/');
@@ -28,8 +32,10 @@ function MenuUsuario(props) {
         
         <Dropdown alignRight as={ButtonGroup}>
             <Dropdown.Toggle variant="outline-success" id="dropdown-basic" size="sm"><FaUserTie /></Dropdown.Toggle>
+            <Form inline>
+                    <MenuUsuario />
+            </Form>
             <Dropdown.Menu>
-                <Dropdown.Item>{contexto.perfil.nombre}</Dropdown.Item>
                 <Dropdown.Item as={Link} to='/logout'>Cerrar sesión</Dropdown.Item>
             </Dropdown.Menu>
             

@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from './Layout';
 import { Api} from '../utils/Api';
-import { Button, Modal, Image, Table, Card} from 'react-bootstrap'
+import { Button, Modal, Image, Table} from 'react-bootstrap'
 import {toast} from 'react-toastify';
 import { ArrowLeft } from 'react-bootstrap-icons';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,7 +18,7 @@ function Ejercitar(props){
     const [subCategoriaSeleccionada, setSubCategoriaSeleccionada] = useState([]);
     const [categorias, setCategoria] = useState([]);
     const [etiquetas, setEtiquetas] = useState([]);
-    const [categoriaSeleccionada, setCategoriaSeleccionada] =useState({
+    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState({
         id: "",
         nombre: ""
     });
@@ -49,44 +49,11 @@ function Ejercitar(props){
         }
     }
 
-    function obtenerEtiquetaSeleccionada(etiqueta_id, etiqueta_nombre){
-        if(esAlteracion){
-            setAlteracionSeleccionada({
-                'id' : etiqueta_id,
-                'nombre' : etiqueta_nombre
-            })
-        }else{  
-            setEtiquetaSeleccionada({
-                'id' : etiqueta_id,
-                'nombre' : etiqueta_nombre   
-            })
-        }
-    }
-
-    function limpiarDatos(){
-        setCategoriaSeleccionada({
-            id : "",
-            nombre : ""
-        });
-        setEtiquetaSeleccionada({
-            id : "",
-            nombre : ""
-        }); 
-        setEtiquetas([]);
-        setAlteracionSeleccionada([]);
-        setAlteraciones([]);
-        setEstadoMostrarCategoria(false);
-        setEstadoClickCategoria(true);
-        setEsAlteracion(false);
-    }
-
-    function ejercitarNuevamente(){
-        handleClose()
-        setEstadoMostrarCategoria(false);
-        obtenerDatosCelula()
-    }
-
     async function enviarInfo(){
+        if(categoriaSeleccionada.id==15){
+            etiquetaSeleccionada.id = 59
+            etiquetaSeleccionada.nombre = ''
+        }
         let data = {
             categoria_id : categoriaSeleccionada.id,
             categoria_nombre : categoriaSeleccionada.nombre,
@@ -128,7 +95,7 @@ function Ejercitar(props){
             let etiqueta = await Api(`api/etiquetas?categoria_id=${categoria_id}`, {}, {}, true, 'get');
             if (etiqueta && etiqueta.status === 200){
                 setEtiquetas(etiqueta.data.etiquetas)
-                if (categoriaSeleccionada.nombre==""){
+                if (categoriaSeleccionada.nombre===""){
                     setCategoriaSeleccionada({
                         id : categoria_id,
                         nombre : categoria_nombre
@@ -147,7 +114,7 @@ function Ejercitar(props){
         }
         
         let alteracion = await Api(`api/categorias/alteraciones?categoria_id=${categoria_id}`, {}, {}, true, 'get');
-        if (alteracion && alteracion.status == 200){
+        if (alteracion && alteracion.status === 200){
             setAlteraciones(alteracion.data.alteraciones)
         }else{
             console.log("eror al llamar alteraciones")
@@ -157,7 +124,7 @@ function Ejercitar(props){
     }
 
     async function obtenerDatosCelula() {
-    let resultado = await Api('api/celula', {}, {}, true, 'get');
+    let resultado = await Api(`api/celula?celula_id=${props.match.params.celula_id ? props.match.params.celula_id : ""}`, {}, {}, true, 'get');
         if (resultado && resultado.status === 200) {
             if(resultado.data.celula){
                 setCelula(resultado.data.celula);
@@ -171,8 +138,46 @@ function Ejercitar(props){
         }
     }
 
+    function obtenerEtiquetaSeleccionada(etiqueta_id, etiqueta_nombre){
+        if(esAlteracion){
+            setAlteracionSeleccionada({
+                'id' : etiqueta_id,
+                'nombre' : etiqueta_nombre
+            })
+        }else{  
+            setEtiquetaSeleccionada({
+                'id' : etiqueta_id,
+                'nombre' : etiqueta_nombre   
+            })
+        }
+    }
+
+    function limpiarDatos(){
+        setCategoriaSeleccionada({
+            id : "",
+            nombre : ""
+        });
+        setEtiquetaSeleccionada({
+            id : "",
+            nombre : ""
+        });
+        setEtiquetas([]);
+        setAlteracionSeleccionada([]);
+        setAlteraciones([]);
+        setEstadoMostrarCategoria(false);
+        setEstadoClickCategoria(true);
+        setEsAlteracion(false);
+    }
+
+    function ejercitarNuevamente(){
+        handleClose()
+        setEstadoMostrarCategoria(false);
+        obtenerDatosCelula()
+    }
+
     useEffect(
         () => {
+            console.log(props.match.params)
             obtenerDatosCelula();
             obtenerCategorias();
             obtenerEtiquetaSeleccionada();
@@ -184,14 +189,15 @@ function Ejercitar(props){
             <Layout>
                         <div style={{ marginTop: "10px" }} align="center" hidden={mostrarImagenCelula} >
                             <div hidden={estadoMostrarCategoria}>
-                                <Button variant="outline-dark" style={{width:"200px", height:"30px"}}  disabled>
+                                {/* <Button variant="outline-dark" style={{width:"200px", height:"30px", verticalAlign:"top"}}  disabled>
                                     Célula a clasificar
-                                </Button>
+                                </Button> */}
                                 <Image style={{width:"200px", height:"250px", marginTop:"2px"}} src={celula.url_imagen} rounded></Image>
                                 <br></br>
-                                <Button variant="outline-dark" style={{width:"200px", height:"30px", marginBottom:"3px"}} disabled>
+                                <Button variant="outline-dark" style={{width:"200px", height:"30px", marginTop:"3px", marginBottom:"3px"}} disabled>
                                     Seleccione línea
                                 </Button>
+                                <br></br>
                                 {estadoMostrarCategoria===false ? 
                                 <>
                                     {categorias.map((radio, index) => (
@@ -228,11 +234,6 @@ function Ejercitar(props){
                                   <></>  
                                 }
                             </div>
-                            {/* <Button variant="outline-secondary" hidden={estadoClickCategoria} onClick={(e)=>{
-                                limpiarDatos();
-                            }}>
-                                Volver a Línea
-                            </Button> */}
                             <ArrowLeft hidden={estadoClickCategoria} align="left" variant="outline-secondary" onClick={(e)=>{
                                 limpiarDatos();
                             }}> arrow left</ArrowLeft>

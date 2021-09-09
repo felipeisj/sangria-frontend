@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import BootstrapTable from "react-bootstrap-table-next";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 
 import Layout from './Layout';
-import { Api, getLocalFile } from '../utils/Api';
+import { Api} from '../utils/Api';
 
 function Tabla(props) {
 

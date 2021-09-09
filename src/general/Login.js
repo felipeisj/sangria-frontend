@@ -1,12 +1,15 @@
 import React, {useState, useContext} from 'react';
 import {Api} from '../utils/Api';
 import {Alert, Button} from 'react-bootstrap';
+import UserContext from '../UserContext';
 
 function Login (props) {
     const [notificacion, setNotificacion] = useState(false);
+    const contexto = useContext(UserContext);
     const [usuario, setUsuario] = useState({
         username: '',
         password: '',
+        academico: '',
         access_token: ''
     });
 
@@ -30,11 +33,13 @@ function Login (props) {
             if (resultado && resultado.status === 200) {
                 localStorage.setItem('token', resultado.data.access_token);
                 console.log(resultado.data.access_token)
-                localStorage.setItem('usuario', resultado.data.usuario);
+                localStorage.setItem('id', resultado.data.usuario.id);
+                // localStorage.setItem('nombre', resultado.data.usuario.nombre);
                 console.log("resultado")
+                contexto.setPerfil(resultado.data.usuario)
                 setNotificacion(false);
                 //setRedireccionar(true);
-                props.history.push('/menu');
+                props.history.push('/ejercitar');
             } else {
                 console.log("tenemos un error");
                 // Determinar qué casos tratemos aquí

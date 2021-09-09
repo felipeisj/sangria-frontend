@@ -1,17 +1,15 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Form, NavDropdown, ButtonGroup, Navbar, Nav} from 'react-bootstrap'
 import {withRouter, Link} from 'react-router-dom';
-import UserContext from '../../UserContext'
 import MenuUsuario from './MenuUsuario';
+import UserContext from '../../UserContext';
 
 function Menu(props){
-    const contexto = useContext(UserContext)
-    const [mostrarSelectorPredio, setMostrarSelectorPredio] = useState(false);
-    // const tipoPredio = contexto.predio.cooperativa === true ? "Cooperativa" : "Predio";
+    const contexto = useContext(UserContext);
 
     return (
         <Navbar bg="light" expand="lg">
-            <Navbar.Brand href={"#home"}>
+            <Navbar.Brand as={Link} to='/menu'>
                 {/* <img
                     src={window.location.origin + '/logo_uach.png'}
                     // width="50"
@@ -33,12 +31,13 @@ function Menu(props){
                         
                     </NavDropdown>
                     <NavDropdown title="Ejercitar" id="basic-nav-dropdown">
-                        <NavDropdown.Item as={Link} to={'/'}></NavDropdown.Item>
-                        {/* { tipoPredio === "Cooperativa" &&
-                            <NavDropdown.Item as={Link} to={'/configuracion/cooperativas/cooperados'}>Cooperados</NavDropdown.Item>
-                        } */}
                         <NavDropdown.Item as={Link} to='/ejercitar'>Go</NavDropdown.Item>
                     </NavDropdown>
+                    {contexto.perfil.academico==true &&
+                        <NavDropdown title="Dataset" id="basic-nav-dropdown">
+                            <NavDropdown.Item as={Link} to='/informacion'>Respuestas</NavDropdown.Item>
+                        </NavDropdown>
+                    }
                 </Nav>
                 <Form inline className="float-right">
                     {/* <FormControl type="text" placeholder="Search" className="mr-sm-2" /> */}
